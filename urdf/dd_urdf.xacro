@@ -1,0 +1,114 @@
+<?xml version="1.0" ?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="dd_robot">
+  <!-- Including materials, wheels, Gazebo plugins -->
+  <xacro:include filename="$(find obstacle_avoidance)/urdf/materials.xacro" />
+  <xacro:include filename="$(find obstacle_avoidance)/urdf/dd_robot.gazebo" />
+  <xacro:include filename="$(find obstacle_avoidance)/urdf/wheels.xacro" />
+  <static>false</static>
+
+  <link name="link_chassis">
+    <!-- pose and inertial -->
+    <pose>0 0 0.1 0 0 0</pose>
+    <inertial>
+      <mass value="5"/>
+      <origin rpy="0 0 0" xyz="0 0 0.1"/>
+      <inertia ixx="0.0395416666667" ixy="0" ixz="0" iyy="0.106208333333" iyz="0" izz="0.106208333333"/>
+    </inertial>
+    <!-- body -->
+    <collision name="collision_chassis">
+      <geometry>
+        <cylinder radius="0.3" length="0.05"/>
+      </geometry>
+    </collision>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.3" length="0.05"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+  </link>
+
+  <link name="caster_front_wheel">
+    <!-- caster front -->
+    <collision name="caster_front_collision">
+      <origin rpy=" 0 0 0" xyz="0.35 0 -0.05"/>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+      <surface>
+        <friction>
+          <ode>
+            <mu>0</mu>
+            <mu2>0</mu2>
+            <slip1>1.0</slip1>
+            <slip2>1.0</slip2>
+            
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+    
+    <visual name="caster_front_wheel">
+      <origin rpy=" 0 0 0" xyz="0.2 0 -0.05"/>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="0.2"/>
+      <origin rpy="0 1.5707 1.5707" xyz="0 0 0"/>
+      <inertia ixx="0.000526666666667" ixy="0" ixz="0" iyy="0.000526666666667" iyz="0" izz="0.001"/>
+    </inertial>
+  
+  </link>
+  <joint name="caster_to_chasis" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="link_chassis"/>
+    <child link="caster_front_wheel"/>
+  </joint>
+
+  <!-- sensor_laser -->
+  <link name="sensor_laser">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <mass value="3" />
+      <xacro:box_inertia mass="1" w="0.15" h="0.15" d="0.05" />
+    </inertial>
+    
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <box size="0.15 0.15 0.05"/> 
+      </geometry>
+      <material name="white" />
+    </visual>
+    
+    <!--collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.15 0.15 0.05"/>
+      </geometry>
+    </collision -->
+    </link>
+   
+   <!--  laser Joint -->
+  
+  
+  <joint name="joint_sensor_laser" type="fixed">
+    <origin xyz="0.15 0 0.05" rpy="0 0 0"/>
+    <parent link="link_chassis"/>
+    <child link="sensor_laser"/>
+  </joint>
+  
+  <!-- right wheel and jt. --> 
+  <xacro:link_wheel name="link_right_wheel" />
+  <xacro:joint_wheel name="joint_right_wheel" child="link_right_wheel" origin_xyz="0 -0.3 0" />
+
+  <!-- left wheel and jt. -->
+  <xacro:link_wheel name="link_left_wheel" />
+  <xacro:joint_wheel name="joint_left_wheel" child="link_left_wheel" origin_xyz="0 0.3 0" />
+  
+</robot>
+
